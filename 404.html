@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Safe Zone – Family Safety App</title>
-  <base href="/">
+  <base href="/SafeZone/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Safe Zone – real-time family location sharing, geofence alerts, and location history. Keep your loved ones safe.">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -13,13 +13,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9863750008533062" crossorigin="anonymous"></script>
-  <!-- GitHub Pages SPA routing: restores path captured by 404.html -->
+  <!-- GitHub Pages SPA routing: restores path encoded by 404.html via ?p= query param -->
   <script>
     (function() {
-      var redirect = sessionStorage.redirect;
-      delete sessionStorage.redirect;
-      if (redirect && redirect !== location.href) {
-        history.replaceState(null, null, redirect);
+      var l = window.location;
+      if (l.search[1] === 'p') {
+        var decoded = l.search.slice(1).split('&').reduce(function(memo, item) {
+          var parts = item.split('=');
+          memo[parts[0]] = parts.slice(1).join('=').replace(/~and~/g, '&');
+          return memo;
+        }, {});
+        if (decoded['p'] !== undefined) {
+          window.history.replaceState(null, null,
+            decoded['p'] + (decoded['q'] ? '?' + decoded['q'] : '') + l.hash
+          );
+        }
       }
     })();
   </script>
